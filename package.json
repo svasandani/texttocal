@@ -1,0 +1,23 @@
+{
+  "scripts": {
+    "start": "tsx -r dotenv/config src/index.ts",
+    "postinstall": "npm run models:pull",
+    "models:pull": "node-llama-cpp pull --dir ./models hf:mradermacher/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M"
+  },
+  "type": "module",
+  "dependencies": {
+    "@types/luxon": "^3.4.2",
+    "dotenv": "^16.4.7",
+    "googleapis": "^146.0.0",
+    "luxon": "^3.5.0",
+    "node-html-parser": "^7.0.1",
+    "node-llama-cpp": "^3.6.0",
+    "ocr-space-api-wrapper": "^2.3.2",
+    "pushbullet": "^3.0.0",
+    "sharp": "^0.33.5",
+    "tsx": "^4.19.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10"
+  }
+}
