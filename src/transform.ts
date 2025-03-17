@@ -41,18 +41,20 @@ export const parseEventFromText = async (prompt: string): Promise<Event> => {
   });
 
   const context = await model.createContext();
+  const systemPrompt = "You are a terse, efficient event parsing program. " +
+    "Always answer as accurately as possible.\n" +
+    
+    "Titles and locations should be concise and to the point. " +
+    "Start and end dates should be in ISO 8601 format, in UTC, and should be different from each other. " +
+    "Today is a " + DateTime.now().weekdayLong + ". " + 
+    "The current date and time in UTC is " + DateTime.now().toUTC().toISO() + ".\n" +
+    
+    "You will be given unstructured text, potentially extracted from an image. " +
+    "You should use the text to populate the JSON fields, and nothing else.";
 
   const session = new LlamaChatSession({
     contextSequence: context.getSequence(),
-    systemPrompt: "You are a terse, efficient event parsing program." +
-    "Always answer as accurately as possible.\n" +
-    
-    "Titles and locations should be concise and to the point." +
-    "Start and end dates should be in ISO 8601 format, in UTC, and should be different from each other." +
-    "Today's date is " + DateTime.now().toISO() + ".\n" +
-    
-    "You will be given unstructured text, potentially extracted from an image." +
-    "You should use the text to populate the JSON fields, and nothing else."
+    systemPrompt,
   });
   
   const response = await session.prompt(prompt, { grammar });
