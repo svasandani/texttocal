@@ -70,3 +70,10 @@ export const parseEventFromText = async (prompt: string): Promise<Event> => {
 
   return event;
 };
+
+export const enrichEvent = async (event: Event, additionalInfo: string) => {
+  return {
+    ...event,
+    description: additionalInfo + "\n\n" + event.description,
+  }
+};

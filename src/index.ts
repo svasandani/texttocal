@@ -1,6 +1,6 @@
-import { writeEventToCalendar } from "./load";
-import { parseEventFromText } from "./transform";
 import { parseTextFromImage, parseTextFromLink, resizeImageToFilesize, saveImageToFile } from "./extract";
+import { writeEventToCalendar } from "./load";
+import { enrichEvent, parseEventFromText } from "./transform";
 import { PushbulletListener } from "./trigger";
 
 const pushbullet = new PushbulletListener(process.env.PUSHBULLET_ACCESS_TOKEN ?? "", process.env.PUSHBULLET_DEVICE_IDEN ?? "");
@@ -11,6 +11,7 @@ await pushbullet.registerTickleListener(async (push: {
   file_url: string;
 } | {
   type: "link";
+  title: string;
   url: string;
 } | {
   type: "note";
@@ -23,14 +24,18 @@ await pushbullet.registerTickleListener(async (push: {
 
   try {
     let text;
+    let additionalInfo;
     if (push.type === "file") {
       const path = await saveImageToFile(push.file_url);
       const resizedPath = await resizeImageToFilesize(path);
       text = await parseTextFromImage(resizedPath);
+      additionalInfo = push.file_url;
     } else if (push.type === "link") {
-      text = await parseTextFromLink(push.url);
+      text = push.title + "\n\n" + await parseTextFromLink(push.url);
+      additionalInfo = push.url;
     } else if (push.type === "note") {
       text = push.body;
+      additionalInfo = push.body;
     }
 
     console.log({
@@ -39,7 +44,8 @@ await pushbullet.registerTickleListener(async (push: {
     });
 
     const event = await parseEventFromText(text);
-    const link = await writeEventToCalendar(event);
+    const enrichedEvent = await enrichEvent(event, additionalInfo);
+    const link = await writeEventToCalendar(enrichedEvent);
 
     console.log({
       msg: "Event written to calendar",

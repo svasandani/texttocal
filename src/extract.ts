@@ -125,13 +125,13 @@ export const parseTextFromLink = async (url: string) => {
   });
   
   const response = await fetch(url);
-  const html = await response.text();
-  const body = parse(html).querySelector("body");
-  body?.querySelectorAll("script, style").forEach((element) => {
+  const responseText = await response.text();
+  const html = parse(responseText);
+  html?.querySelectorAll("head, iframe, script, style").forEach((element) => {
     element.remove();
   });
-  body?.removeWhitespace();
-  const text = body?.textContent;
+  html?.removeWhitespace();
+  const text = html?.textContent;
 
   console.log({
     msg: "Parsed text from link",
