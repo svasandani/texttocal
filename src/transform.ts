@@ -49,7 +49,7 @@ export const parseEventFromText = async (prompt: string): Promise<Event> => {
     "Today is a " + DateTime.now().weekdayLong + ". " + 
     "The current date and time in UTC is " + DateTime.now().toUTC().toISO() + ".\n" +
     
-    "You will be given unstructured text, potentially extracted from an image. " +
+    "You will be given unstructured text, potentially extracted from an image or website. " +
     "You should use the text to populate the JSON fields, and nothing else.";
 
   const session = new LlamaChatSession({
@@ -66,6 +66,7 @@ export const parseEventFromText = async (prompt: string): Promise<Event> => {
   });
 
   session.dispose();
+  await context.dispose();
 
   return event;
 };
