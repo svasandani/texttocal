@@ -10,21 +10,25 @@ export class PushbulletListener {
   constructor(private readonly accessToken: string, private readonly deviceIden: string) {
     this.pusher = new PushBullet(this.accessToken);
     this.stream = this.pusher.stream();
-    this.connectStream();
   }
 
-  private connectStream() {
-    this.stream.connect();
-
-    this.stream.on("nop", () => {
-      console.log({
-        msg: "Nop from Pushbullet",
+  public async connectStream() {
+    return new Promise((resolve, reject) => {
+      this.stream.connect();
+  
+      this.stream.on("nop", () => {
+        console.log({
+          msg: "Nop from Pushbullet",
+        });
       });
-    });
-    this.stream.on("tickle", (type: string) => {
-      if (type === "push") {
-        this.handlePushTickle();
-      }
+      this.stream.on("tickle", (type: string) => {
+        if (type === "push") {
+          this.handlePushTickle();
+        }
+      });
+      this.stream.on("error", (error) => {
+        reject(error)
+      })
     });
   }
 
@@ -58,7 +62,7 @@ export class PushbulletListener {
     this.listener?.(latestInboundPush);
   }
 
-  async registerTickleListener(listener: (push: any) => void) {
+  registerTickleListener(listener: (push: any) => void) {
     this.listener = listener;
   }
 

@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "start": "pm2 start tsx -- -r dotenv/config src/index.ts",
-    "pm2": "pm2",
+    "start": "tsx src/index.ts",
     "postinstall": "npm run models:pull",
     "models:pull": "node-llama-cpp pull --dir ./models hf:mradermacher/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M"
   },
@@ -14,7 +13,6 @@
     "node-html-parser": "^7.0.1",
     "node-llama-cpp": "^3.6.0",
     "ocr-space-api-wrapper": "^2.3.2",
-    "pm2": "^6.0.5",
     "pushbullet": "^3.0.0",
     "sharp": "^0.33.5",
     "tsx": "^4.19.3"
